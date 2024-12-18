@@ -18,6 +18,10 @@ function signup(event){
     axios.post('http://127.0.0.1:3000/user/signup', user)
     .then(res => {
            alert(res.data.message);
+           if(res.status===201)
+           {
+            window.location.href='/user/loginpage';
+           }
         document.getElementById('name').value='';
         document.getElementById('email').value='';
         document.getElementById('phone').value='';

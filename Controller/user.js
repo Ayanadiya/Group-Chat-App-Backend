@@ -1,5 +1,7 @@
 const User=require('../Model/user');
 
+const path=require('path');
+
 const bcrypt=require('bcrypt');
 
 exports.postsignup= async (req,res) => {
@@ -32,4 +34,8 @@ exports.postsignup= async (req,res) => {
         console.log(error);
         res.status(500).json({error:error, message:"Could not add user"});
     }
+}
+
+exports.getloginpage= (req,res) => {
+    res.sendFile(path.join(__dirname,'../','views','login.html'));
 }

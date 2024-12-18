@@ -17,26 +17,15 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header text-center">
-                        <h4>Sign Up</h4>
+                        <h4>Login</h4>
                     </div>
                     <div class="card-body">
-                        <form onsubmit="signup(event)">
-                            <!-- Name -->
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
-                            </div>
+                        <form onsubmit="login(event)">
 
                             <!-- Email -->
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email Id</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-
-                            <!-- Phone Number -->
-                            <div class="mb-3">
-                                <label for="phone" class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" required>
                             </div>
 
                             <!-- Password -->
@@ -46,13 +35,19 @@
                             </div>
 
                             <!-- Submit Button -->
-                            <button type="submit" class="btn btn-success w-100">Sign Up</button>
+                            <button type="submit" class="btn btn-success w-100">Login</button>
                         </form>
+                    </div>
+                    <div>
+                        <p>Forgot Password?<a href='/password' class="text-danger">Get Your Password</a></p>
+                    </div>
+                    <div>
+                        <p>Don't have an account? <a href='/user/getSignup'class="text-danger">Sign Up</a></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="/signup.js"></script>
+    <script src="/login.js"></script>
 </body>
 </html>
