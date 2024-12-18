@@ -8,6 +8,10 @@
     <title>Chat App - SignUp</title>
 </head>
 <body>
+    <header class="bg-success text-white text-center py-5">
+        <h1>Welcome to Talkify</h1>
+        <p>Your go-to chat app for seamless communication</p>
+    </header>
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -19,13 +23,13 @@
                         <form onsubmit="signup(event)">
                             <!-- Name -->
                             <div class="mb-3">
-                                <label for="name" class="form-label">Full Name</label>
+                                <label for="name" class="form-label">Name</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
                             </div>
 
                             <!-- Email -->
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email address</label>
+                                <label for="email" class="form-label">Email Id</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
 
@@ -42,14 +46,13 @@
                             </div>
 
                             <!-- Submit Button -->
-                            <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                            <button type="submit" class="btn btn-success w-100">Sign Up</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../Dom.js/signup.js"></script>
+    <script src="signup.js"></script>
 </body>
 </html>
