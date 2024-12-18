@@ -22,11 +22,11 @@ exports.postsignup= async (req,res) => {
             phone:phone,
             password:hashedpassword
         })
-        res.status(201).json({userdata:user, message:"User account ceated successfuly"})
+        res.status(201).json({userdata:user, message:"Successfuly signed up"})
     } catch (error) {
         if(error.name==='SequelizeUniqueConstraintError')
         {
-            res.status(400).json({message:"Email already registered"});
+            res.status(400).json({message:"Email already have account, Please Login"});
             return;
         }
         console.log(error);
