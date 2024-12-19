@@ -60,7 +60,7 @@ exports.postlogin= async (req,res, next) => {
             const isMatch= await bcrypt.compare(password, user.password);
             if(isMatch)
             {
-                return res.status(200).json({message:'Login successfuly', token:generateAcesstoken(user.id,user.name)})
+                return res.status(200).json({message:'Login successfuly', token:generateAcesstoken(user.id,user.username)})
             }
             else
             {

@@ -15,6 +15,7 @@ function login(event){
         const token=res.data.token;
         localStorage.setItem('token',token);
         alert(res.data.message);
+        window.location.href='/chat';
         document.getElementById('email').value='';
         document.getElementById('password').value='';
 

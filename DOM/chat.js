@@ -1,38 +1,58 @@
+
+
 document.addEventListener("DOMContentLoaded", function () {
-    const token = localStorage.getItem("Token") || "Arun";
-    const decodedToken = parseJwt(token);
+    const token = localStorage.getItem('token');
+    const decodedToken=parseJwt(token);
     const username = decodedToken.name;
+    console.log(decodedToken);
     document.getElementById("username-nav").textContent = username;
 
     // Handle Logout
     document.getElementById("logout-btn").addEventListener("click", function () {
         // Clear localStorage and redirect or do a full logout action here
         localStorage.removeItem("token");
-        localStorage.removeItem("username");
         window.location.href = "/"; // Redirect to the home page after logout
     });
 
-    fetchLoggedInUsers();
+    fetchLoggedInUsers(username);
     fetchMessages();
 
     // Send message logic
     const sendButton = document.getElementById("send-btn");
     const messageInput = document.getElementById("message");
-    sendButton.addEventListener("click", function () {
-        const message = messageInput.value.trim();
-        if (message !== "") {
-            // You would send the message to the backend here
-            // For now, we will just display it in the chat list
-            const li = document.createElement("li");
-            li.classList.add("list-group-item");
-            li.textContent = `${username}: ${message}`;
-            document.getElementById("chat-list").appendChild(li);
-            messageInput.value = ""; // Clear message input after sending
+
+    sendButton.addEventListener("click", async function () {
+    const message = messageInput.value.trim(); // Get the message from the input field
+
+    // Only send the message if it's not empty
+    if (message !== "") {
+        try {
+            // Make the POST request with the message and the Authorization token
+            const res = await axios.post('http://127.0.0.1:3000/chat/addmessage', { message }, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}` 
+                }
+            });
+            if(res.status===201){
+                console.log(res.data);
+                const name = res.data.name;
+                const chatMessage = res.data.message;
+                const li = document.createElement("li");
+                li.classList.add("list-group-item");
+                li.textContent = `${name}: ${chatMessage}`;
+                document.getElementById("chat-list").appendChild(li);
+                messageInput.value = ""; 
+            }
+            
+        } catch (err) {
+            console.log(err);
         }
-    });
+    }
 });
 
-function parseJWT(token) {
+});
+
+function parseJwt(token) {
     if (!token) {
         return null; // If no token provided, return null
     }
@@ -50,43 +70,25 @@ function parseJWT(token) {
     }
 }
 
-function fetchLoggedInUsers() {
-    fetch("http://127.0.0.1:3000/users", {
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}` 
-        }
-    })
-    .then(response => response.json())
-    .then(users => {
-        const chatList = document.getElementById("chat-list");
-    
-        users.forEach(user => {
-            const li = document.createElement("li");
-            li.classList.add("list-group-item");
-            li.textContent = `${user.username} joined`; 
-            chatList.appendChild(li);
-        });
-    })
-    .catch(err => {
-        console.error("Error fetching users:", err);
-    });
+function fetchLoggedInUsers(name) {
+    const chatList = document.getElementById("chat-list");
+    const li = document.createElement("li");
+    li.classList.add("list-group-item");
+    li.textContent = `${name} joined`; 
+    chatList.appendChild(li);
 }
 
 // Fetch all chat messages
 function fetchMessages() {
-    fetch("http://127.0.0.1:3000/messages", {
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}` 
-        }
-    })
-    .then(response => response.json())
-    .then(messages => {
-        const chatList = document.getElementById("chat-list");
-
-        messages.forEach(message => {
+    axios.get("http://127.0.0.1:3000/chat/getmessages")
+    .then(response => {
+        const chats=response.data;
+        console.log(chats);
+        chats.forEach(chat => {
+            console.log(message)
             const li = document.createElement("li");
             li.classList.add("list-group-item");
-            li.textContent = `${message.user}: ${message.message}`; // Display the user and their message
+            li.textContent = `${chat.username}: ${chat.message}`; // Display the user and their message
             chatList.appendChild(li);
         });
     })
