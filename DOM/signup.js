@@ -30,6 +30,10 @@ function signup(event){
     .catch(err => {
         const errorMessage = err.response?.data?.message || 'Something went wrong. Please try again.';
         alert(errorMessage);
+        if(err.status===400)
+            {
+             window.location.href='/user/loginpage';
+            }
         console.log(err);
     })
     

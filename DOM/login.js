@@ -1,7 +1,7 @@
 function login(event){
     event.preventDefault();
-    const email=document.getElementById('email');
-    const password=document.getElementById('password');
+    const email=document.getElementById('email').value;
+    const password=document.getElementById('password').value;
     if(!email || !password)
     {
         alert("All fields are required");
@@ -12,9 +12,11 @@ function login(event){
     }
     axios.post('http://127.0.0.1:3000/user/login', creds)
     .then(res=> {
+        const token=res.data.token;
+        localStorage.setItem('token',token);
         alert(res.data.message);
         document.getElementById('email').value='';
-        document.getElementById('phone').value='';
+        document.getElementById('password').value='';
 
     })
     .catch(err => {
