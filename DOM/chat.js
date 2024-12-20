@@ -2,6 +2,10 @@ const token = localStorage.getItem('token');
 const decodedToken=parseJwt(token);
 const username = decodedToken.name;
 console.log(decodedToken);
+setInterval(() => {
+    fetchLoggedInUsers();
+    fetchMessages();
+},1000);
 const logoutbtn=document.getElementById("logout-btn")
 logoutbtn.addEventListener('click', logout);
 
@@ -12,7 +16,7 @@ const chatList= document.getElementById("chat-list");
 
 document.addEventListener("DOMContentLoaded", function () {
     updateusername()
-    fetchLoggedInUsers(username);
+    fetchLoggedInUsers();
     fetchMessages();
 });
 
@@ -39,9 +43,18 @@ function updateusername(){
 }
 
 function logout(){
-    // Clear localStorage and redirect or do a full logout action here
-    localStorage.removeItem("token");
-    window.location.href = "/"; // Redirect to the home page after logout
+    axios.put(`http://127.0.0.1:3000/user/logout/${decodedToken.userId}`)
+    .then(res => {
+        if(res.status(200))
+        {
+            localStorage.removeItem("token");
+            window.location.href = "/";
+        }
+        alert(res.data.message);
+    })
+    .catch(err => {
+        console.log(err);
+    })
 }
 
 function sendmessage(){
@@ -71,12 +84,23 @@ function sendmessage(){
     .catch(err => console.log(err));
 }
 
-function fetchLoggedInUsers(name) {
-    const chatList = document.getElementById("chat-list");
-    const li = document.createElement("li");
-    li.classList.add("list-group-item");
-    li.textContent = `${name} joined`; 
-    chatList.appendChild(li);
+function fetchLoggedInUsers() {
+    axios.get('http://127.0.0.1:3000/user/activeuser')
+    .then(res => {
+        console.log(res.status);
+        const users=res.data;
+        console.log(users);
+        const chatList = document.getElementById("chat-list");
+        chatList.innerHTML="";
+        users.forEach(user => {
+            const li = document.createElement("li");
+            li.classList.add("list-group-item");
+            li.textContent = `${user.username} joined`; 
+            chatList.appendChild(li);
+       })
+   })
+    .catch(err => console.log(err));
+    
 }
 
 // Fetch all chat messages
