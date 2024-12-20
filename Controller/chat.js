@@ -7,27 +7,33 @@ exports.getchatpage = (req, res) => {
 }
 
 exports.addmessage= async (req, res, next) => {
-    const {message} = req.body
-    const {id, username} =req.user;
+    const {message, userId, username} = req.body
     try {
         const chat= await Chat.create({
             message:message,
-            userId:id
+            userId:userId
         })
+        console.log(chat);
         res.status(201).json({message:chat.message, name:username});
     } catch (error) {
+        console.log(error);
         res.status(500).json(error);
     }   
 }
 
 exports.getallchat= async (req,res,next) => {
     try {
-        const chats= await Chat.findAll({
+        const messages = await Chat.findAll({
             include: [{
                 model: User,
-                attributes: ['username']
+                attributes: ['username'] // Only fetch the username from the User model
             }]
         });
+        const chats= messages.map(msg => ({
+            message: msg.message,
+            username: msg.user.username
+        })
+    )
         res.status(200).json(chats);
     } catch (error) {
         console.log(error);

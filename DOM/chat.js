@@ -1,55 +1,19 @@
+const token = localStorage.getItem('token');
+const decodedToken=parseJwt(token);
+const username = decodedToken.name;
+console.log(decodedToken);
+const logoutbtn=document.getElementById("logout-btn")
+logoutbtn.addEventListener('click', logout);
 
+const sendButton = document.getElementById("send-btn");
+sendButton.addEventListener("click", sendmessage);
+
+const chatList= document.getElementById("chat-list");
 
 document.addEventListener("DOMContentLoaded", function () {
-    const token = localStorage.getItem('token');
-    const decodedToken=parseJwt(token);
-    const username = decodedToken.name;
-    console.log(decodedToken);
-    document.getElementById("username-nav").textContent = username;
-
-    // Handle Logout
-    document.getElementById("logout-btn").addEventListener("click", function () {
-        // Clear localStorage and redirect or do a full logout action here
-        localStorage.removeItem("token");
-        window.location.href = "/"; // Redirect to the home page after logout
-    });
-
+    updateusername()
     fetchLoggedInUsers(username);
     fetchMessages();
-
-    // Send message logic
-    const sendButton = document.getElementById("send-btn");
-    const messageInput = document.getElementById("message");
-
-    sendButton.addEventListener("click", async function () {
-    const message = messageInput.value.trim(); // Get the message from the input field
-
-    // Only send the message if it's not empty
-    if (message !== "") {
-        try {
-            // Make the POST request with the message and the Authorization token
-            const res = await axios.post('http://127.0.0.1:3000/chat/addmessage', { message }, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}` 
-                }
-            });
-            if(res.status===201){
-                console.log(res.data);
-                const name = res.data.name;
-                const chatMessage = res.data.message;
-                const li = document.createElement("li");
-                li.classList.add("list-group-item");
-                li.textContent = `${name}: ${chatMessage}`;
-                document.getElementById("chat-list").appendChild(li);
-                messageInput.value = ""; 
-            }
-            
-        } catch (err) {
-            console.log(err);
-        }
-    }
-});
-
 });
 
 function parseJwt(token) {
@@ -68,6 +32,43 @@ function parseJwt(token) {
         console.error('Invalid JWT token', error);
         return null; // In case the token is invalid
     }
+}
+
+function updateusername(){
+    document.getElementById("username-nav").textContent = username;
+}
+
+function logout(){
+    // Clear localStorage and redirect or do a full logout action here
+    localStorage.removeItem("token");
+    window.location.href = "/"; // Redirect to the home page after logout
+}
+
+function sendmessage(){
+    const messageInput = document.getElementById("message");
+    const message = messageInput.value.trim();
+    if(message==='')
+    {
+    alert("No message");
+    }
+    const userId=decodedToken.userId;
+    const chat={
+        message,
+        userId,
+        username
+    }
+    axios.post('http://127.0.0.1:3000/chat/addmessage',chat)
+    .then(res => {
+        console.log(res.data)
+        const name = res.data.name;
+        const chatMessage = res.data.message;
+        const li = document.createElement("li");
+        li.classList.add("list-group-item");
+        li.textContent = `${name}: ${chatMessage}`;
+        chatList.appendChild(li);
+        messageInput.value = ""; 
+    })
+    .catch(err => console.log(err));
 }
 
 function fetchLoggedInUsers(name) {
