@@ -8,6 +8,6 @@ router.get('/', chatController.getchatpage);
 
 router.post('/addmessage', chatController.addmessage);
 
-router.get('/getmessages', chatController.getallchat);
+router.get('/getmessages/:lastmsgid', chatController.getallchat);
 
 module.exports=router;

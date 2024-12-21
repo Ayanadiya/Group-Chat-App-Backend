@@ -2,8 +2,10 @@ const token = localStorage.getItem('token');
 const decodedToken=parseJwt(token);
 const username = decodedToken.name;
 console.log(decodedToken);
+
+const messages=[];
+
 setInterval(() => {
-    fetchLoggedInUsers();
     fetchMessages();
 },1000);
 const logoutbtn=document.getElementById("logout-btn")
@@ -105,17 +107,27 @@ function fetchLoggedInUsers() {
 
 // Fetch all chat messages
 function fetchMessages() {
-    axios.get("http://127.0.0.1:3000/chat/getmessages")
+    var lastmessageid;
+    if(messages.length>0)
+    {
+        console.log(messages);
+        lastmessageid=messages[messages.length-1].id;
+    }
+    axios.get(`http://127.0.0.1:3000/chat/getmessages/${lastmessageid}`)
     .then(response => {
         const chats=response.data;
         console.log(chats);
         chats.forEach(chat => {
-            console.log(message)
+            messages.push(chat);
             const li = document.createElement("li");
             li.classList.add("list-group-item");
             li.textContent = `${chat.username}: ${chat.message}`; // Display the user and their message
             chatList.appendChild(li);
         });
+        if(messages.length>1000)
+        {
+            messages.splice(0,100);
+        }
     })
     .catch(err => {
         console.error("Error fetching messages:", err);
