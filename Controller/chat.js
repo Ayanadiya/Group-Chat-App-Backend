@@ -15,7 +15,7 @@ exports.addmessage= async (req, res, next) => {
             userId:userId
         })
         console.log(chat);
-        res.status(201).json({message:chat.message, name:username});
+        res.status(201).json({chat:chat, name:username});
     } catch (error) {
         console.log(error);
         res.status(500).json(error);

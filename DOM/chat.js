@@ -3,11 +3,11 @@ const decodedToken=parseJwt(token);
 const username = decodedToken.name;
 console.log(decodedToken);
 
-const messages=[];
+const messages=JSON.parse(localStorage.getItem("messages")) || [];
 
-setInterval(() => {
-    fetchMessages();
-},1000);
+//setInterval(() => {
+//    fetchMessages();
+//},1000);
 const logoutbtn=document.getElementById("logout-btn")
 logoutbtn.addEventListener('click', logout);
 
@@ -50,6 +50,7 @@ function logout(){
         if(res.status(200))
         {
             localStorage.removeItem("token");
+            localStorage.clear();
             window.location.href = "/";
         }
         alert(res.data.message);
@@ -76,7 +77,9 @@ function sendmessage(){
     .then(res => {
         console.log(res.data)
         const name = res.data.name;
-        const chatMessage = res.data.message;
+        const chatMessage = res.data.chat.message;
+        messages.push(res.data.chat);
+        localStorage.setItem("messages", JSON.stringify(messages));
         const li = document.createElement("li");
         li.classList.add("list-group-item");
         li.textContent = `${name}: ${chatMessage}`;
@@ -107,10 +110,9 @@ function fetchLoggedInUsers() {
 
 // Fetch all chat messages
 function fetchMessages() {
-    var lastmessageid;
+    let lastmessageid=-1;
     if(messages.length>0)
     {
-        console.log(messages);
         lastmessageid=messages[messages.length-1].id;
     }
     axios.get(`http://127.0.0.1:3000/chat/getmessages/${lastmessageid}`)
@@ -128,8 +130,11 @@ function fetchMessages() {
         {
             messages.splice(0,100);
         }
+        localStorage.setItem("messages", JSON.stringify(messages));
     })
     .catch(err => {
         console.error("Error fetching messages:", err);
     });
 }
+
+

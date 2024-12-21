@@ -106,3 +106,14 @@ exports.logout= async (req,res,next) => {
     }
     
 }
+
+exports.getusers = async (req,res,next) =>  {
+    try {
+        
+        const users= await Users.findAll({attributes:['username', 'id']});
+        res.status(201).json(users)
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
