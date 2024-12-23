@@ -7,7 +7,12 @@ const Groupuser= sequelize.define('groupmembers', {
                allowNull:false,
                primaryKey:true,
                autoIncrement:true
-    }
+    },
+    role: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue:'member'
+      }
 })
 
 module.exports=Groupuser;

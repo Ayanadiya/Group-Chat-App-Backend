@@ -10,4 +10,6 @@ router.get('/getgroup/:userId', groupController.getGroups);
 
 router.get('/getgroupmessages/:id', groupController.getgroupmessages);
 
+router.post('/addmember', groupController.addmembers);
+
 module.exports=router;

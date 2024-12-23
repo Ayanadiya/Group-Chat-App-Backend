@@ -2,19 +2,23 @@
 const createGroupBtnModal = document.getElementById('createGroupBtnModal');
 const groupNameInput = document.getElementById('groupName');
 const grouplist=document.getElementById('group-list');
+const addmemberbtn=document.getElementById('addmemder-btn');
+addmemberbtn.addEventListener('click', addmember);
 
 // Create Group
 createGroupBtnModal.addEventListener('click', function() {
     const groupName = groupNameInput.value.trim();
     const selectedUsers = Array.from(document.getElementById('groupMembers').selectedOptions).map(option => option.value);
+    const userId=localStorage.getItem('id');
 
     if (!groupName && selectedUsers.length > 0) {
         alert('Please enter a group name.');
         return;
     }
-    axios.post(`http://127.0.0.1:3000/group/creategroup/`,{
+    axios.post(`http://127.0.0.1:3000/group/creategroup`,{
         groupName,
-        selectedUsers
+        selectedUsers,
+        userId
     })
     .then(res => {
         alert("new group has created");
@@ -30,10 +34,11 @@ createGroupBtnModal.addEventListener('click', function() {
 function getGroups() {
     const userId=localStorage.getItem('id')
     console.log("userId", userId);
+    console.log("sending to backend for groups");
     axios.get(`http://127.0.0.1:3000/group/getgroup/${userId}`)
     .then(res => {
         const groups=res.data;
-        console.log(groups);
+        console.log("groups",groups);
         groups.forEach(group => {
             addtogroplist(group);
         });
@@ -90,4 +95,17 @@ function getUsers(){
     .catch(error => {
         console.error("Error fetching users:", error);
     })
+}
+
+function addmember(){
+    const userIdentifier=document.getElementById('addmember').value;
+    const groupId=localStorage.getItem('groupid');
+    axios.post('http://127.0.0.1:3000/group/addmember', {
+        userIdentifier,
+        groupId
+    })
+    .then(res => {
+        
+    })
+    .catch()
 }

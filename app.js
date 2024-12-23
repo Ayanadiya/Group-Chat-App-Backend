@@ -40,14 +40,22 @@ const port=process.env.PORT;
 
 User.hasMany(Chat, { foreignKey: 'userId' });  // A User has many Chats
 Chat.belongsTo(User, { foreignKey: 'userId' });  // A Chat belongs to a User
-User.hasMany(Group);
-Group.hasMany(User);
-Chat.hasMany(Group);
-Group.hasMany(Chat);
-Groupuser.belongsTo(User);
-User.hasMany(Groupuser);
-Groupuser.belongsTo(Group);
-Group.hasMany(Groupuser);
+User.belongsToMany(Group, { through: Groupuser, foreignKey: 'userId', as: 'groups' });
+Group.belongsToMany(User, { through: Groupuser, foreignKey: 'groupId', as: 'members' });
+Group.hasMany(Chat, { foreignKey: 'groupId' });
+Chat.belongsTo(Group, { foreignKey: 'groupId' });
+Groupuser.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Groupuser, { foreignKey: 'userId' });
+Groupuser.belongsTo(Group, { foreignKey: 'groupId' });
+Group.hasMany(Groupuser, { foreignKey: 'groupId' });
+//User.hasMany(Group);
+//Group.hasMany(User);
+//Chat.hasMany(Group);
+//Group.hasMany(Chat);
+//Groupuser.belongsTo(User);
+//User.hasMany(Groupuser);
+//Groupuser.belongsTo(Group);
+//Group.hasMany(Groupuser);
 
 sequelize.sync()
 .then(result => {
