@@ -64,12 +64,15 @@
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary btn-bg-success" type="button" id="send-btn">Send</button>
                     </div>
-                    <input type="text" class="form-control" id="addmember" placeholder="Search with NAme or Email or Phone" 
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="addmember" placeholder="Search with Name or Email or Phone" 
                     aria-label="Recipient's message" aria-describedby="basic-addon2">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary btn-bg-success" type="button" id="addmemder-btn">Add Members</button>
                     </div>
                 </div>
+                <button class="btn btn-outline-secondary btn-bg-success" data-bs-toggle="modal" data-bs-target="#viewgroupmembers">View members</button>
             </div>
         </div>
     </div>
@@ -102,7 +105,23 @@
             </div>
         </div>
     </div>
-
+    
+    <div class="modal fade" id="viewgroupmembers" tabindex="-1" aria-labelledby="createGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createGroupModalLabel">Group Members</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                   <ul id="members"></ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/chat.js"></script>

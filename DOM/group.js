@@ -1,9 +1,11 @@
 
+
 const createGroupBtnModal = document.getElementById('createGroupBtnModal');
 const groupNameInput = document.getElementById('groupName');
 const grouplist=document.getElementById('group-list');
 const addmemberbtn=document.getElementById('addmemder-btn');
 addmemberbtn.addEventListener('click', addmember);
+const groupmemberlist=document.getElementById('members');
 
 // Create Group
 createGroupBtnModal.addEventListener('click', function() {
@@ -60,6 +62,7 @@ window.addEventListener('DOMContentLoaded', () => {
 })
 
 function loadGroupMessages(groupname,id){
+    loadgroupmembers(id);
     document.getElementById('group').textContent=groupname;
     localStorage.removeItem('groupid');
     localStorage.setItem('groupid', id);
@@ -98,14 +101,84 @@ function getUsers(){
 }
 
 function addmember(){
+    const userId=localStorage.getItem('id');
     const userIdentifier=document.getElementById('addmember').value;
     const groupId=localStorage.getItem('groupid');
     axios.post('http://127.0.0.1:3000/group/addmember', {
+        userId,
         userIdentifier,
         groupId
     })
     .then(res => {
-        
+        alert(res.data.message);
     })
-    .catch()
+    .catch(error => {
+        alert(error.data.message);
+    })
+}
+
+function loadgroupmembers(groupId){
+    console.log('sending to backend for group members');
+    axios.get(`http://127.0.0.1:3000/group/getgroupmembers/${groupId}`)
+    .then(res =>{
+        const members=res.data;
+        members.forEach(member => {
+            const li=document.createElement('li');
+            li.textContent=member.user.username;
+            if(member.role==='admin')
+            {
+                li.innerHTML = `${member.user.username} (Admin)`;
+            }
+            else
+            {
+                const convertButton = document.createElement('button');
+                convertButton.textContent = 'Convert to Admin';
+                convertButton.classList.add('btn', 'btn-warning', 'btn-sm', 'ms-2');
+                convertButton.onclick = () => promoteToAdmin(member.userId, groupId);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete User';
+                deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'ms-2');
+                deleteButton.onclick = () => deletemember(member.userId, groupId);
+                li.appendChild(convertButton);
+                li.appendChild(deleteButton);
+            }
+            groupmemberlist.appendChild(li);
+        })
+    })
+    .catch(error => {
+        console.log('Error fetching group members:', error);
+    })
+}
+
+function promoteToAdmin(memberId, groupId){
+    const userId=localStorage.getItem('id');
+    axios.put('http://127.0.0.1:3000/group/addAdmin', {
+        userId,
+        memberId,
+        groupId
+    }).then(res => {
+        console.log(res);
+        alert(res.data.message);
+    })
+    .catch(error =>{
+        console.log(error);
+        alert(error.response.data.message);
+    })
+}
+
+function deletemember(memberId, groupId){
+    const userId=localStorage.getItem('id');
+    axios.put('http://127.0.0.1:3000/group/deletemember', {
+        userId,
+        memberId,
+        groupId
+    }).then(res => {
+        console.log(res);
+        alert(res.data.message);
+    })
+    .catch(error =>{
+        console.log(error);
+        alert(error.data.message);
+    })
 }

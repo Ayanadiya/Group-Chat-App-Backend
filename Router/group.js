@@ -12,4 +12,10 @@ router.get('/getgroupmessages/:id', groupController.getgroupmessages);
 
 router.post('/addmember', groupController.addmembers);
 
+router.get('/getgroupmembers/:groupId', groupController.getgroupmembers);
+
+router.put('/addAdmin', groupController.addAdmin);
+
+router.put('/deletemember', groupController.deleteMember);
+
 module.exports=router;

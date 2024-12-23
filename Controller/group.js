@@ -2,7 +2,7 @@ const Group= require('../Model/group');
 const Groupuser=require('../Model/usergroup');
 const Chat=require('../Model/chat');
 const User=require('../Model/user');
-const { where } = require('sequelize');
+const { where, Op } = require('sequelize');
 
 exports.createGroup= async (req,res,next) => {
     try {
@@ -63,15 +63,20 @@ exports.getgroupmessages= async (req,res,next) => {
 
 exports.addmembers=async (req,res,next) => {
     try {
-        const { userIdentifier, groupId } = req.body; // userIdentifier could be name, email, or phone
+        const { userId, userIdentifier, groupId } = req.body; // userIdentifier could be name, email, or phone
+        const isadmin= await Groupuser.findOne({where:[{userId:userId},{groupId:groupId}]});
+        if(isadmin.role!=='admin')
+        {
+            return res.status(404).json({message:'only admins can add member'});
+        }
         const user = await User.findOne({
           where: {
-            [Sequelize.Op.or]: [
+            [Op.or]: [
               { username: userIdentifier },
               { email: userIdentifier },
               { phone: userIdentifier },
             ],
-          },
+          }
         });
     
         if (!user) {
@@ -99,4 +104,68 @@ exports.addmembers=async (req,res,next) => {
         console.error(error);
         res.status(500).json({ message: 'Error adding user to the group' });
       }
+}
+
+exports.getgroupmembers= async(req,res,next) => {
+    try {
+        const {groupId} = req.params;
+        const members= await Groupuser.findAll({
+            attributes:['role', 'userId'],
+            where:{groupId:groupId},
+            include:[{
+                model: User,
+                attributes: ['username'] // Only fetch the username from the User model
+            }]
+        })
+        console.log("members",members);
+        res.status(200).json(members);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
+
+exports.addAdmin= async (req,res,next) => {
+    try {
+        const {userId, memberId, groupId} = req.body;
+        const isadmin= await Groupuser.findOne({where:[{userId:userId},{groupId:groupId}]});
+        if(isadmin.role!=='admin')
+        {
+            return res.status(404).json({message:'only admins can add admins'});
+        }
+        const member=await Groupuser.findOne({where:[{userId:memberId}, {groupId:groupId}]});
+        if(!member)
+        {
+            return res.status(404).json({message:"Not a member"});
+        }
+        if(member.role==='admin')
+        {
+            return res.status(404).json({messsage:"Already admin"});
+        }
+        member.role='admin';
+        await member.save();
+        res.status(200).json({message:"converted to Admin"});
+    } catch (error) {
+       res.status(500).json({message:'Smething went wrong'}); 
+    }
+}
+
+exports.deleteMember = async (req,res,next) => {
+    try {
+        const {userId, memberId, groupId} = req.body;
+        const isadmin= await Groupuser.findOne({where:[{userId:userId},{groupId:groupId}]});
+        if(isadmin.role!=='admin')
+        {
+            return res.status(404).json({message:'only admins can remove members'});
+        }
+        const member=await Groupuser.findOne({where:[{userId:memberId}, {groupId:groupId}]});
+        if(!member)
+        {
+            return res.status(404).json({message:"Not a member"});
+        }
+        await member.destroy();
+        res.status(400).json({message: "Deleted member"});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
 }
