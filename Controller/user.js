@@ -80,9 +80,7 @@ exports.postlogin= async (req,res, next) => {
 exports.getactiveusers= async (req,res,next) => {
      try {
         const users= await User.findAll({attributes:['username'], where:{active:true}});
-        console.log("this is what users have:", users );
         if (users.length === 0) {
-            console.log('no users found');
             return res.status(404).json({ message: "No active users found" });
         }
         res.status(200).json(users);
@@ -96,7 +94,8 @@ exports.logout= async (req,res,next) => {
     try {
         const userId=req.params.userId;
         console.log(userId);
-        const user= await User.findOne({where:{id:userId}});
+        const user= await User.findOne({where:{id:userId}
+        });
         user.active=false;
         await user.save();
         res.status(200).json({message:"User logout successfully"});
@@ -110,7 +109,7 @@ exports.logout= async (req,res,next) => {
 exports.getusers = async (req,res,next) =>  {
     try {
         
-        const users= await Users.findAll({attributes:['username', 'id']});
+        const users= await User.findAll({attributes:['username', 'id']});
         res.status(201).json(users)
     } catch (error) {
         console.log(error);

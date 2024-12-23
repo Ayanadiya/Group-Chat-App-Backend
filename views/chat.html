@@ -33,27 +33,38 @@
                         <button class="btn btn-bg-light text-light" data-bs-toggle="modal" data-bs-target="#createGroupModal">
                             Create Group
                         </button>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- Chat List Section -->
-    <div class="container col-md-6 my-1">
-        <h3 class="text-center text-success">Chats</h3>
-        <ul class="list-group" id="chat-list">
-            <!-- Chat list items will be populated dynamically here -->
-        </ul>
-    </div>
+    <!-- Chat Section -->
+    <div class="container-fluid my-1">
+        <div class="row">
+            <!-- Groups/Chats List on the Left -->
+            <div class="col-md-4">
+                <h3 class="text-center text-success">Groups</h3>
+                <ul class="list-group" id="group-list">
+                    <!-- Chat list items will be populated dynamically here -->
+                </ul>
+            </div>
 
-    <!-- Message Input Section -->
-    <div class="container col-md-6 my-1">
-        <hr>
-        <div class="input-group">
-            <input type="text" class="form-control" id="message" placeholder="Enter message" 
-            aria-label="Recipient's message" aria-describedby="basic-addon2">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary btn-bg-success" type="button" id="send-btn">Send</button>
+            <!-- Message Input Section on the Right -->
+            <div class="col-md-8">
+                <h3 class="text-center text-success">Chats</h3>
+                <hr>
+                <h2 class="text-center text-success" id="group">Group Name</h2>
+                <ul class="list-group" id="chat-list">
+                    <!-- Chat list items will be populated dynamically here -->
+                </ul>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="message" placeholder="Enter message" 
+                    aria-label="Recipient's message" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary btn-bg-success" type="button" id="send-btn">Send</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -71,26 +82,17 @@
                         <label for="groupName" class="form-label">Group Name</label>
                         <input type="text" class="form-control" id="groupName" placeholder="Enter group name">
                     </div>
-                    <!-- User Selection Dropdown with checkboxes -->
+                    <!-- Select Users to Add to Group -->
                     <div class="mb-3">
-                        <label for="userSelect" class="form-label">Select Users</label>
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                Select Users
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="userSelectDropdown">
-                                <!-- Dynamic User List will be populated here -->
-                            </ul>
-                        </div>
+                        <label for="groupMembers" class="form-label">Select Users</label>
+                        <select class="form-select" id="groupMembers" multiple>
+                            <!-- Users will be populated dynamically here -->
+                        </select>
                     </div>
-                    <!-- Display Selected Users -->
-                    <ul class="list-group selected-users-list" id="selectedUsersList">
-                        <!-- Selected users will appear here -->
-                    </ul>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="createGroupBtnModal">Create Group</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="createGroupBtnModal">Create Group</button>
                 </div>
             </div>
         </div>

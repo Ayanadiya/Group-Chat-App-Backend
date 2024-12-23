@@ -1,83 +1,93 @@
-let registeredUsers = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-    { id: 3, name: 'Mary Johnson' },
-    { id: 4, name: 'James Brown' },
-    { id: 5, name: 'Patricia Williams' }
-];
 
-const userSelectDropdown = document.getElementById('userSelectDropdown');
-const selectedUsersList = document.getElementById('selectedUsersList');
 const createGroupBtnModal = document.getElementById('createGroupBtnModal');
 const groupNameInput = document.getElementById('groupName');
-const selectedUserIds = new Set();
+const grouplist=document.getElementById('group-list');
 
-// Populate the user select dropdown with registered users
-function populateUserSelect() {
-    axios.get('http://127.0.0.1:3000/user/getusers')
+// Create Group
+createGroupBtnModal.addEventListener('click', function() {
+    const groupName = groupNameInput.value.trim();
+    const selectedUsers = Array.from(document.getElementById('groupMembers').selectedOptions).map(option => option.value);
+
+    if (!groupName && selectedUsers.length > 0) {
+        alert('Please enter a group name.');
+        return;
+    }
+    axios.post(`http://127.0.0.1:3000/group/creategroup/`,{
+        groupName,
+        selectedUsers
+    })
     .then(res => {
-       // registeredUsers= res.data;
-        console.log("registeredusers:", registeredUsers);
-        userSelectDropdown.innerHTML = '';  // Clear previous options
-        registeredUsers.forEach(user => {
-            const li = document.createElement('li');
-            li.classList.add('dropdown-item');
-            li.innerHTML = `
-                <input type="checkbox" class="form-check-input me-2" id="user-${user.id}" value="${user.id}">
-                ${user.username}
-            `;
-            userSelectDropdown.appendChild(li);
+        alert("new group has created");
+        // Reset the form
+    groupNameInput.value = '';
+    bootstrap.Modal.getInstance(document.getElementById('createGroupModal')).hide();
+    })
+    .catch(error => {
+        console.log(error);
+    })
+});
+
+function getGroups() {
+    const userId=localStorage.getItem('id')
+    console.log("userId", userId);
+    axios.get(`http://127.0.0.1:3000/group/getgroup/${userId}`)
+    .then(res => {
+        const groups=res.data;
+        console.log(groups);
+        groups.forEach(group => {
+            addtogroplist(group);
         });
     })
     .catch()
-    
+}
 
-    // Attach event listeners to checkboxes to manage selections
-    const checkboxes = userSelectDropdown.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                selectedUserIds.add(this.value);
-            } else {
-                selectedUserIds.delete(this.value);
-            }
-            updateSelectedUsersList();
+function addtogroplist(group) {
+     const li=document.createElement('button');
+     li.classList.add("list-group-item", "list-group-item-action");
+     li.textContent=group.group.groupname;
+     li.onclick = () => loadGroupMessages(group.groupname,group.groupId);
+     grouplist.appendChild(li);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    getGroups();
+    getUsers();
+})
+
+function loadGroupMessages(groupname,id){
+    document.getElementById('group').textContent=groupname;
+    localStorage.removeItem('groupid');
+    localStorage.setItem('groupid', id);
+    console.log('sending to backend for group message');
+    axios.get(`http://127.0.0.1:3000/group/getgroupmessages/${id}`)
+    .then(res => {
+        chatList.innerHTML='';
+        const chats=res.data;
+        console.log(chats);
+        chats.forEach(chat => {
+            const li = document.createElement("li");
+            li.classList.add("list-group-item");
+            li.textContent = `${chat.user.username}: ${chat.message}`; // Display the user and their message
+            chatList.appendChild(li);
+        })  
+    })
+    .catch()
+}
+
+function getUsers(){
+    axios.get('http://127.0.0.1:3000/user/getusers')
+    .then(response => {
+        const users = response.data;
+        console.log(users);
+        const userSelect = document.getElementById('groupMembers');
+        users.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.id;
+            option.textContent = user.username;
+            userSelect.appendChild(option);
         });
-    });
+    })
+    .catch(error => {
+        console.error("Error fetching users:", error);
+    })
 }
-
-// Update the selected users list in the modal
-function updateSelectedUsersList() {
-    selectedUsersList.innerHTML = '';  // Clear the list
-
-    // Get selected users from registeredUsers array based on selectedUserIds
-    const selectedUsers = registeredUsers.filter(user => selectedUserIds.has(user.id.toString()));
-
-    selectedUsers.forEach(user => {
-        const li = document.createElement('li');
-        li.classList.add('list-group-item');
-        li.textContent = user.name;
-        selectedUsersList.appendChild(li);
-    });
-}
-
-// Create Group and Send Invitations
-createGroupBtnModal.addEventListener('click', function() {
-    const groupName = groupNameInput.value.trim();
-
-    if (!groupName || selectedUserIds.size === 0) {
-        alert('Please enter a group name and select at least one user.');
-        return;
-    }
-
-    axios.post()
-    alert(`Group "${groupName}" created successfully with the following users: ${Array.from(selectedUserIds).join(', ')}`);
-
-    // Reset the form
-    groupNameInput.value = '';
-    selectedUserIds.clear();  // Clear the selected user IDs
-    updateSelectedUsersList(); // Update the UI to reflect changes
-    bootstrap.Modal.getInstance(document.getElementById('createGroupModal')).hide();
-    populateUserSelect();
-});
-

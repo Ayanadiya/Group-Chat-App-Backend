@@ -8,11 +8,12 @@ exports.getchatpage = (req, res) => {
 }
 
 exports.addmessage= async (req, res, next) => {
-    const {message, userId, username} = req.body
+    const {message, userId, username, groupId} = req.body
     try {
         const chat= await Chat.create({
             message:message,
-            userId:userId
+            userId:userId,
+            groupId:groupId
         })
         console.log(chat);
         res.status(201).json({chat:chat, name:username});

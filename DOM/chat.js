@@ -2,6 +2,7 @@ const token = localStorage.getItem('token');
 const decodedToken=parseJwt(token);
 const username = decodedToken.name;
 console.log(decodedToken);
+localStorage.setItem('id', decodedToken.userId);
 
 const messages=JSON.parse(localStorage.getItem("messages")) || [];
 
@@ -47,12 +48,9 @@ function updateusername(){
 function logout(){
     axios.put(`http://127.0.0.1:3000/user/logout/${decodedToken.userId}`)
     .then(res => {
-        if(res.status(200))
-        {
             localStorage.removeItem("token");
             localStorage.clear();
             window.location.href = "/";
-        }
         alert(res.data.message);
     })
     .catch(err => {
@@ -68,10 +66,12 @@ function sendmessage(){
     alert("No message");
     }
     const userId=decodedToken.userId;
+    const groupId=localStorage.getItem('groupid');
     const chat={
         message,
         userId,
-        username
+        username,
+        groupId,
     }
     axios.post('http://127.0.0.1:3000/chat/addmessage',chat)
     .then(res => {
