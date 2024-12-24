@@ -6,9 +6,9 @@ localStorage.setItem('id', decodedToken.userId);
 
 const messages=JSON.parse(localStorage.getItem("messages")) || [];
 
-setInterval(() => {
-   fetchMessages();
-},1000);
+//setInterval(() => {
+   //fetchMessages();
+//},1000);
 const logoutbtn=document.getElementById("logout-btn")
 logoutbtn.addEventListener('click', logout);
 
