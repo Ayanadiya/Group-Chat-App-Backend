@@ -1,3 +1,4 @@
+
 const token = localStorage.getItem('token');
 const decodedToken=parseJwt(token);
 const username = decodedToken.name;
@@ -6,8 +7,10 @@ localStorage.setItem('id', decodedToken.userId);
 
 const messages=JSON.parse(localStorage.getItem("messages")) || [];
 
+const socket=io('http://127.0.0.1:3000')
+
 //setInterval(() => {
-//    fetchMessages();
+ //  fetchMessages();
 //},1000);
 const logoutbtn=document.getElementById("logout-btn")
 logoutbtn.addEventListener('click', logout);
@@ -15,7 +18,6 @@ logoutbtn.addEventListener('click', logout);
 const sendButton = document.getElementById("send-btn");
 sendButton.addEventListener("click", sendmessage);
 
-const chatList= document.getElementById("chat-list");
 
 document.addEventListener("DOMContentLoaded", function () {
     updateusername()
@@ -136,5 +138,14 @@ function fetchMessages() {
         console.error("Error fetching messages:", err);
     });
 }
+
+socket.on('newMessage', function(data) {
+    console.log("New message received:", data);
+    const chatList = document.getElementById("chat-list");
+    const li = document.createElement("li");
+    li.classList.add("list-group-item");
+    li.textContent = `${data.username}: ${data.message}`;
+    chatList.appendChild(li);
+});
 
 

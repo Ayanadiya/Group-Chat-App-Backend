@@ -1,8 +1,9 @@
 const express=require('express');
+const http = require('http');
+const socketIo = require('socket.io');
 const bodyParser=require('body-parser');
 const path=require('path')
 const cors=require('cors')
-
 require('dotenv').config();
 
 const sequelize=require('./Util/db');
@@ -21,6 +22,14 @@ const Groupuser=require('./Model/usergroup');
 
 const app=express();
 
+// Create HTTP server
+const server = http.createServer(app);
+
+// Initialize Socket.IO with the server
+const io = socketIo(server);
+
+module.exports = { io }; 
+
 app.use(cors({
     origin:"*"
 }))
@@ -36,8 +45,6 @@ app.use('/group',groupRouter);
 app.use(errorController.errorpage);
 
 
-const port=process.env.PORT;
-
 User.hasMany(Chat, { foreignKey: 'userId' });  // A User has many Chats
 Chat.belongsTo(User, { foreignKey: 'userId' });  // A Chat belongs to a User
 User.belongsToMany(Group, { through: Groupuser, foreignKey: 'userId', as: 'groups' });
@@ -48,18 +55,22 @@ Groupuser.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(Groupuser, { foreignKey: 'userId' });
 Groupuser.belongsTo(Group, { foreignKey: 'groupId' });
 Group.hasMany(Groupuser, { foreignKey: 'groupId' });
-//User.hasMany(Group);
-//Group.hasMany(User);
-//Chat.hasMany(Group);
-//Group.hasMany(Chat);
-//Groupuser.belongsTo(User);
-//User.hasMany(Groupuser);
-//Groupuser.belongsTo(Group);
-//Group.hasMany(Groupuser);
+
+const port=process.env.PORT;
 
 sequelize.sync()
 .then(result => {
     console.log("Database ready");
-    app.listen(port || 3000);
+    server.listen(port || 3000, () => {
+        console.log(`Server is running on port ${port || 3000}`);
+    });
 })
 .catch(err => console.log(err));
+
+io.on('connection', socket => {
+    console.log('A user connected');
+
+    socket.on('disconnect', () => {
+      console.log('A user disconnected');
+    });
+  });

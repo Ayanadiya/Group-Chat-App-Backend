@@ -1,11 +1,11 @@
 
-
 const createGroupBtnModal = document.getElementById('createGroupBtnModal');
 const groupNameInput = document.getElementById('groupName');
 const grouplist=document.getElementById('group-list');
 const addmemberbtn=document.getElementById('addmemder-btn');
 addmemberbtn.addEventListener('click', addmember);
 const groupmemberlist=document.getElementById('members');
+const chatList= document.getElementById("chat-list");
 
 // Create Group
 createGroupBtnModal.addEventListener('click', function() {
@@ -113,7 +113,7 @@ function addmember(){
         alert(res.data.message);
     })
     .catch(error => {
-        alert(error.data.message);
+        alert(error.response.data.message);
     })
 }
 

@@ -1,7 +1,8 @@
+const { io } = require('../app');
 const path=require('path')
 const Chat=require('../Model/chat');
 const User=require('../Model/user');
-const { where, Op } = require('sequelize');
+const { where, Op } = require('sequelize')
 
 exports.getchatpage = (req, res) => {
     res.sendFile(path.join(__dirname, '../', 'views', 'chat.html'));
@@ -16,6 +17,14 @@ exports.addmessage= async (req, res, next) => {
             groupId:groupId
         })
         console.log(chat);
+        if (io) {
+            io.emit('newMessage', {
+              username,
+              message: chat.message
+            });
+          } else {
+            console.log('Socket.IO instance (io) is undefined');
+          }
         res.status(201).json({chat:chat, name:username});
     } catch (error) {
         console.log(error);
