@@ -10,7 +10,7 @@ const messages=JSON.parse(localStorage.getItem("messages")) || [];
 const socket=io('http://127.0.0.1:3000')
 
 //setInterval(() => {
- //  fetchMessages();
+//    fetchMessages();
 //},1000);
 const logoutbtn=document.getElementById("logout-btn")
 logoutbtn.addEventListener('click', logout);
