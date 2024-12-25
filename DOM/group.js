@@ -59,7 +59,7 @@ function addtogroplist(group) {
 window.addEventListener('DOMContentLoaded', () => {
     getGroups();
     getUsers();
-})
+});
 
 function loadGroupMessages(groupname,id){
     loadgroupmembers(id);
@@ -73,9 +73,16 @@ function loadGroupMessages(groupname,id){
         const chats=res.data;
         console.log(chats);
         chats.forEach(chat => {
+            const name=chat.user.username;
+            const chatMessage=chat.message;
+            const chatFileUrl=chat.fileUrl;
             const li = document.createElement("li");
             li.classList.add("list-group-item");
-            li.textContent = `${chat.user.username}: ${chat.message}`; // Display the user and their message
+            if (chatFileUrl) {
+                li.innerHTML = `${name}: ${chatMessage} <br><img src="${chatFileUrl}" alt="Shared File" style="max-width: 100px; max-height: 100px;"/>`;
+            } else {
+                li.textContent = `${name}: ${chatMessage}`;
+            }
             chatList.appendChild(li);
         })  
     })

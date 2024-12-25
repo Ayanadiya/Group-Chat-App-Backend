@@ -1,6 +1,7 @@
 const express=require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const fileUpload = require('express-fileupload');
 const bodyParser=require('body-parser');
 const path=require('path')
 const cors=require('cors')
@@ -37,6 +38,12 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'DOM')));
 app.use(express.static(path.join(__dirname, 'views')));
 
+// Use the file upload middleware globally
+app.use(fileUpload({
+    createParentPath: true,
+    limits: { fileSize: 5 * 1024 * 1024 }, // file size limit = 5 MB
+    abortOnLimit: true
+}));
 
 app.use(homepageRouter);
 app.use('/user', userRouter);

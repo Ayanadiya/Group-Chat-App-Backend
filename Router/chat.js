@@ -10,4 +10,6 @@ router.post('/addmessage', chatController.addmessage);
 
 router.get('/getmessages/:lastmsgid', chatController.getallchat);
 
+router.post('/upload', chatController.uploadfile);
+
 module.exports=router;

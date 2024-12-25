@@ -46,7 +46,7 @@ exports.getgroupmessages= async (req,res,next) => {
     try{
         const id=req.params.id;
         const messages= await Chat.findAll({
-            attributes:['message'],
+            attributes:['message', 'fileUrl'],
             include: [{
                 model: User,
                 attributes: ['username'] // Only fetch the username from the User model

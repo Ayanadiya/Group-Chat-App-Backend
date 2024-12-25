@@ -10,7 +10,11 @@ const Chat= sequelize.define('chats', {
     },
     message:{
         type:Sequelize.STRING,
-        allowNull:false
+        allowNull:true
+    },
+    fileUrl:{
+        type:Sequelize.STRING,
+        allowNull:true
     }
 });
 
