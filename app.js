@@ -5,9 +5,11 @@ const fileUpload = require('express-fileupload');
 const bodyParser=require('body-parser');
 const path=require('path')
 const cors=require('cors')
+const { CronJob}=require('cron');
 require('dotenv').config();
 
 const sequelize=require('./Util/db');
+const Scheduler=require('./Util/scheduler');
 
 const homepageRouter=require('./Router/homepage');
 const userRouter=require('./Router/user');
@@ -20,6 +22,7 @@ const User=require('./Model/user');
 const Chat=require('./Model/chat');
 const Group=require('./Model/group');
 const Groupuser=require('./Model/usergroup');
+const ArchivedChat=require('./Model/archivedchat');
 
 const app=express();
 
@@ -62,6 +65,10 @@ Groupuser.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(Groupuser, { foreignKey: 'userId' });
 Groupuser.belongsTo(Group, { foreignKey: 'groupId' });
 Group.hasMany(Groupuser, { foreignKey: 'groupId' });
+User.hasMany(ArchivedChat);
+ArchivedChat.belongsTo(User);
+Group.hasMany(ArchivedChat);
+ArchivedChat.belongsTo(Group);
 
 const port=process.env.PORT;
 
@@ -81,3 +88,7 @@ io.on('connection', socket => {
       console.log('A user disconnected');
     });
   });
+
+  // Move all the chats from 'Chat' to 'ArchivedChat' DB-table at 23:59:59
+  const job = new CronJob('59 59 23 * * *', Scheduler.movetoArchivedChat);
+job.start();
